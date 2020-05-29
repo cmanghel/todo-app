@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.scss';
+import _ from "lodash";
 
 type ItemData = {
   task : string;
@@ -26,6 +27,7 @@ interface AppState {
 
 
 class App extends React.Component<AppProps, AppState> {
+  
   constructor(props: AppProps) {
     super(props);
     this.state = {
@@ -35,7 +37,18 @@ class App extends React.Component<AppProps, AppState> {
       ]
     }
   }
+
+  renderTask(i: number): JSX.Element {
+    return (
+      <div>
+        {this.state.items[i].task}
+      </div>
+    )
+  }
+
   render(): JSX.Element {
+    const n = this.state.items.length;
+    const tasks = _.range(n).map((i) => this.renderTask(i))
     return (
     <div className="App">
       <header className="App-header">
@@ -44,7 +57,7 @@ class App extends React.Component<AppProps, AppState> {
         </div>
       </header>
       <div>
-        {this.state.items[0].task}
+        {tasks}
       </div>
     </div>
     )
