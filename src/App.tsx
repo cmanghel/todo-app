@@ -1,23 +1,29 @@
 import React from 'react';
 import './App.scss';
 
-interface ItemProps {
+type ItemData = {
   task : string;
   completed: boolean;
-  //onClic: () => void;
+}
+
+interface ItemProps {
+  value: ItemData;
+  onClick: () => void;
+}
+//eslint-disable-next-line
+function ItemRow(props: ItemProps): JSX.Element {
+  return (
+    <button>{props.value.task}</button>
+  )
 }
 
 interface AppProps {
 }
 interface AppState {
-  items: ItemProps[]
+  items: ItemData[]
 }
 
-function Item(props: ItemProps): JSX.Element {
-  return (
-    <button>{props.task}</button>
-  )
-}
+
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
@@ -38,7 +44,7 @@ class App extends React.Component<AppProps, AppState> {
         </div>
       </header>
       <div>
-        {this.state.items}
+        {this.state.items[0].task}
       </div>
     </div>
     )
