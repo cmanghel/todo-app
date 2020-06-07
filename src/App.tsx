@@ -1,20 +1,20 @@
 import React from 'react';
 import './App.scss';
-import _ from "lodash";
+//import _ from "lodash";
 
 type ItemData = {
   task : string;
   completed: boolean;
 }
 
-interface ItemProps {
+interface ItemRowProps {
   value: ItemData;
   onClick: () => void;
 }
 //eslint-disable-next-line
-function ItemRow(props: ItemProps): JSX.Element {
+function ItemRow(props: ItemRowProps): JSX.Element {
   return (
-    <button>{props.value.task}</button>
+    <p>{props.value.task}</p>
   )
 }
 
@@ -38,17 +38,16 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  renderTask(i: number): JSX.Element {
+  renderTask(item: ItemData): JSX.Element {
     return (
       <div>
-        {this.state.items[i].task}
+        {item.task}
       </div>
     )
   }
 
   render(): JSX.Element {
-    const n = this.state.items.length;
-    const tasks = _.range(n).map((i) => this.renderTask(i))
+    const tasks = this.state.items.map((item) => this.renderTask(item));
     return (
     <div className="App">
       <header className="App-header">
