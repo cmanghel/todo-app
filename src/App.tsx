@@ -4,11 +4,13 @@ import './App.scss';
 type ItemData = {
   task : string;
   completed: boolean;
+
 }
 
 interface ItemRowProps {
   value: ItemData;
   toggleCompleted: () => void;
+  startEdit: () => void;
 }
 
 interface ItemRowState {
@@ -23,7 +25,9 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
           checked={this.props.value.completed} 
           onClick={this.props.toggleCompleted}
         />
-        <button >{this.props.value.task}</button>
+        <button onDoubleClick={this.props.startEdit}>
+          {this.props.value.task}
+        </button>
       </div>
     )
   }
@@ -32,7 +36,8 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
 interface AppProps {
 }
 interface AppState {
-  items: ItemData[]
+  items: ItemData[];
+  beingEdited: number | null;
 }
 
 
@@ -45,15 +50,21 @@ class App extends React.Component<AppProps, AppState> {
       items:[
         {task: "some shit to do", completed: true}, 
         {task: "finish this app", completed: false},
-      ]
+      ],
+      beingEdited: null,
     }
     this.toggleCompleted = this.toggleCompleted.bind(this);
     this.renderTask = this.renderTask.bind(this);
+    this.startEdit = this.startEdit.bind(this);
   }
 
   toggleCompleted(i: number): void {
     this.state.items[i].completed = !this.state.items[i].completed;
     this.setState({items: this.state.items});
+  }
+
+  startEdit(i: number): void {
+    this.setState({beingEdited: i});
   }
   
   renderTask(i: number): JSX.Element {
@@ -61,6 +72,7 @@ class App extends React.Component<AppProps, AppState> {
       <ItemRow 
       value={this.state.items[i]}
       toggleCompleted={() => this.toggleCompleted(i)}
+      startEdit={() => this.startEdit(i)}
       />
     )
   }
