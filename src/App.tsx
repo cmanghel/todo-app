@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.scss';
-//import _ from "lodash";
 
 type ItemData = {
   task : string;
@@ -9,12 +8,19 @@ type ItemData = {
 
 interface ItemRowProps {
   value: ItemData;
-  onClick: () => void;
+  toggleCompleted: () => void;
 }
-//eslint-disable-next-line
+
 function ItemRow(props: ItemRowProps): JSX.Element {
   return (
-    <p>{props.value.task}</p>
+    <div>
+      <input 
+        type="checkbox" 
+        checked={props.value.completed} 
+        onClick={props.toggleCompleted}
+      />
+      <button >{props.value.task}</button>
+    </div>
   )
 }
 
@@ -36,18 +42,26 @@ class App extends React.Component<AppProps, AppState> {
         {task: "finish this app", completed: false},
       ]
     }
+    this.toggleCompleted = this.toggleCompleted.bind(this);
+    this.renderTask = this.renderTask.bind(this);
   }
 
-  renderTask(item: ItemData): JSX.Element {
+  toggleCompleted(i: number): void {
+    this.state.items[i].completed = !this.state.items[i].completed;
+    this.setState({items: this.state.items});
+  }
+  
+  renderTask(i: number): JSX.Element {
     return (
-      <div>
-        {item.task}
-      </div>
+      <ItemRow 
+      value={this.state.items[i]}
+      toggleCompleted={() => this.toggleCompleted(i)}
+      />
     )
   }
 
   render(): JSX.Element {
-    const tasks = this.state.items.map((item) => this.renderTask(item));
+    const tasks = this.state.items.map((item, i) => this.renderTask(i));
     return (
     <div className="App">
       <header className="App-header">
