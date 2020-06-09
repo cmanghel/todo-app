@@ -7,33 +7,50 @@ type ItemData = {
 }
 
 interface ItemRowProps {
-  value: ItemData;
-  toggleCompleted: () => void;
+  key: number;
+  isEdited: boolean;
 }
 
 interface ItemRowState {
+  value: ItemData;
 }
 
 class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
+  constructor(props: ItemRowProps) {
+    super(props);
+    this.state = {
+      value: {task: '', completed: false}
+    }
+    this.toggleCompleted = this.toggleCompleted.bind(this);
+  }
   render() {
     return (
       <div>
         <input 
           type="checkbox" 
-          checked={this.props.value.completed} 
-          onClick={this.props.toggleCompleted}
+          checked={this.state.value.completed} 
+          onClick={this.toggleCompleted}
         />
-        <button >{this.props.value.task}</button>
+        <button >{this.state.value.task}</button>
       </div>
     )
   }
+
+  toggleCompleted(): void {
+    this.state.value.completed = !this.state.value.completed;
+    this.setState({value: this.state.value});
+  }
+
+
 }
 
 interface AppProps {
 }
 interface AppState {
-  items: ItemData[]
+  items: boolean[]
 }
+
+
 
 
 
@@ -42,25 +59,16 @@ class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     this.state = {
-      items:[
-        {task: "some shit to do", completed: true}, 
-        {task: "finish this app", completed: false},
-      ]
+      items:[]
     }
-    this.toggleCompleted = this.toggleCompleted.bind(this);
     this.renderTask = this.renderTask.bind(this);
   }
 
-  toggleCompleted(i: number): void {
-    this.state.items[i].completed = !this.state.items[i].completed;
-    this.setState({items: this.state.items});
-  }
-  
   renderTask(i: number): JSX.Element {
     return (
       <ItemRow 
-      value={this.state.items[i]}
-      toggleCompleted={() => this.toggleCompleted(i)}
+      key={i}
+      isEdited={this.state.items[i]}
       />
     )
   }
