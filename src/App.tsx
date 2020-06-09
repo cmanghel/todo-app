@@ -11,17 +11,22 @@ interface ItemRowProps {
   toggleCompleted: () => void;
 }
 
-function ItemRow(props: ItemRowProps): JSX.Element {
-  return (
-    <div>
-      <input 
-        type="checkbox" 
-        checked={props.value.completed} 
-        onClick={props.toggleCompleted}
-      />
-      <button >{props.value.task}</button>
-    </div>
-  )
+interface ItemRowState {
+}
+
+class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
+  render() {
+    return (
+      <div>
+        <input 
+          type="checkbox" 
+          checked={this.props.value.completed} 
+          onClick={this.props.toggleCompleted}
+        />
+        <button >{this.props.value.task}</button>
+      </div>
+    )
+  }
 }
 
 interface AppProps {
