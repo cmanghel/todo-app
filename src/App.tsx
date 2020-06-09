@@ -1,14 +1,11 @@
 import React from 'react';
 import './App.scss';
 
-type ItemData = {
-  task : string;
-  completed: boolean;
 
-}
 
 interface ItemRowProps {
   value: ItemData;
+  isEditing: boolean;
   toggleCompleted: () => void;
   startEdit: () => void;
 }
@@ -18,6 +15,14 @@ interface ItemRowState {
 
 class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
   render() {
+    if (this.props.isEditing) {
+      return(
+        <div>
+          <input type="text" value={this.props.value.task}/>
+        </div>
+      )
+    }
+    else {
     return (
       <div>
         <input 
@@ -29,8 +34,14 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
           {this.props.value.task}
         </button>
       </div>
-    )
+    )}
   }
+}
+
+
+type ItemData = {
+  task : string;
+  completed: boolean;
 }
 
 interface AppProps {
@@ -71,6 +82,7 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <ItemRow 
       value={this.state.items[i]}
+      isEditing={this.state.beingEdited === i}
       toggleCompleted={() => this.toggleCompleted(i)}
       startEdit={() => this.startEdit(i)}
       />
