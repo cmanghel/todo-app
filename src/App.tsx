@@ -1,4 +1,5 @@
-import React, {Component, KeyboardEvent} from 'react';
+/* eslint-disable */
+import React from 'react';
 import './App.scss';
 
 
@@ -103,8 +104,9 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   deleteItem(i: number): void {
-    this.state.items.splice(i, 1);
-    this.setState(this.state);
+    const items = this.state.items.slice();
+    items.splice(i, 1);
+    this.setState({items, beingEdited: null});
   }
 
   renderTask(i: number): JSX.Element {
