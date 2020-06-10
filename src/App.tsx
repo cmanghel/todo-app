@@ -10,6 +10,7 @@ interface ItemRowProps {
   startEdit: () => void;
   saveEdit: () => void;
   handleEdit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  deleteItem: () => void;
 }
 
 interface ItemRowState {
@@ -40,6 +41,7 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
           <span onDoubleClick={this.props.startEdit}>
             {this.props.value.task}
           </span>
+          <button onClick={this.props.deleteItem}>X</button>
         </div>
       )
     }
@@ -70,6 +72,7 @@ class App extends React.Component<AppProps, AppState> {
       items:[
         {task: "some shit to do", completed: true},
         {task: "finish this app", completed: false},
+        {task: "third task", completed: true},
       ],
       beingEdited: null,
     }
@@ -78,6 +81,7 @@ class App extends React.Component<AppProps, AppState> {
     this.startEdit = this.startEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
+    this.deleteItem = this.deleteItem.bind(this)
   }
 
   toggleCompleted(i: number): void {
@@ -98,6 +102,11 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({beingEdited: null});
   }
 
+  deleteItem(i: number): void {
+    this.state.items.splice(i, 1);
+    this.setState(this.state);
+  }
+
   renderTask(i: number): JSX.Element {
     return (
       <ItemRow
@@ -107,6 +116,7 @@ class App extends React.Component<AppProps, AppState> {
       startEdit={() => this.startEdit(i)}
       handleEdit={(event) => this.handleEdit(i, event)}
       saveEdit={() => this.saveEdit(i)}
+      deleteItem={() => this.deleteItem(i)}
       />
     )
   }
