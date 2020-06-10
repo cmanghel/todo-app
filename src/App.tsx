@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component, KeyboardEvent} from 'react';
 import './App.scss';
 
 
@@ -8,6 +8,8 @@ interface ItemRowProps {
   isEditing: boolean;
   toggleCompleted: () => void;
   startEdit: () => void;
+  saveEdit: () => void;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface ItemRowState {
@@ -18,23 +20,29 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
     if (this.props.isEditing) {
       return(
         <div>
-          <input type="text" value={this.props.value.task}/>
+          <input
+            type="text"
+            value={this.props.value.task}
+            onChange={this.props.handleChange}
+            onBlur={this.props.saveEdit}
+            />
         </div>
       )
     }
     else {
-    return (
-      <div>
-        <input 
-          type="checkbox" 
-          checked={this.props.value.completed} 
-          onClick={this.props.toggleCompleted}
-        />
-        <button onDoubleClick={this.props.startEdit}>
-          {this.props.value.task}
-        </button>
-      </div>
-    )}
+      return (
+        <div>
+          <input
+            type="checkbox"
+            checked={this.props.value.completed}
+            onClick={this.props.toggleCompleted}
+          />
+          <span onDoubleClick={this.props.startEdit}>
+            {this.props.value.task}
+          </span>
+        </div>
+      )
+    }
   }
 }
 
@@ -46,6 +54,7 @@ type ItemData = {
 
 interface AppProps {
 }
+
 interface AppState {
   items: ItemData[];
   beingEdited: number | null;
@@ -54,12 +63,12 @@ interface AppState {
 
 
 class App extends React.Component<AppProps, AppState> {
-  
+
   constructor(props: AppProps) {
     super(props);
     this.state = {
       items:[
-        {task: "some shit to do", completed: true}, 
+        {task: "some shit to do", completed: true},
         {task: "finish this app", completed: false},
       ],
       beingEdited: null,
@@ -67,6 +76,8 @@ class App extends React.Component<AppProps, AppState> {
     this.toggleCompleted = this.toggleCompleted.bind(this);
     this.renderTask = this.renderTask.bind(this);
     this.startEdit = this.startEdit.bind(this);
+    this.saveEdit = this.saveEdit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   toggleCompleted(i: number): void {
@@ -77,14 +88,25 @@ class App extends React.Component<AppProps, AppState> {
   startEdit(i: number): void {
     this.setState({beingEdited: i});
   }
-  
+
+  handleChange(i: number, event: React.ChangeEvent<HTMLInputElement>) {
+    this.state.items[i].task = event.target.value;
+    this.setState({items: this.state.items});
+  }
+
+  saveEdit(i: number): void {
+    this.setState({beingEdited: null});
+  }
+
   renderTask(i: number): JSX.Element {
     return (
-      <ItemRow 
+      <ItemRow
       value={this.state.items[i]}
       isEditing={this.state.beingEdited === i}
       toggleCompleted={() => this.toggleCompleted(i)}
       startEdit={() => this.startEdit(i)}
+      handleChange={(event) => this.handleChange(i, event)}
+      saveEdit={() => this.saveEdit(i)}
       />
     )
   }
