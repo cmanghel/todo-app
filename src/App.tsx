@@ -9,7 +9,7 @@ interface ItemRowProps {
   toggleCompleted: () => void;
   startEdit: () => void;
   saveEdit: () => void;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEdit: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface ItemRowState {
@@ -23,7 +23,7 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
           <input
             type="text"
             value={this.props.value.task}
-            onChange={this.props.handleChange}
+            onChange={this.props.handleEdit}
             onBlur={this.props.saveEdit}
             />
         </div>
@@ -77,7 +77,7 @@ class App extends React.Component<AppProps, AppState> {
     this.renderTask = this.renderTask.bind(this);
     this.startEdit = this.startEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
   toggleCompleted(i: number): void {
@@ -89,7 +89,7 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({beingEdited: i});
   }
 
-  handleChange(i: number, event: React.ChangeEvent<HTMLInputElement>) {
+  handleEdit(i: number, event: React.ChangeEvent<HTMLInputElement>) {
     this.state.items[i].task = event.target.value;
     this.setState({items: this.state.items});
   }
@@ -105,7 +105,7 @@ class App extends React.Component<AppProps, AppState> {
       isEditing={this.state.beingEdited === i}
       toggleCompleted={() => this.toggleCompleted(i)}
       startEdit={() => this.startEdit(i)}
-      handleChange={(event) => this.handleChange(i, event)}
+      handleEdit={(event) => this.handleEdit(i, event)}
       saveEdit={() => this.saveEdit(i)}
       />
     )
