@@ -2,7 +2,24 @@
 import React from 'react';
 import './App.scss';
 
+interface InputRowProps {
+  allCompleted: boolean;
+  toggleAllCompleted: () => void;
+}
 
+function InputRow(props: InputRowProps): JSX.Element {
+  return (
+    <div>
+      <input
+        type="checkbox"
+        checked={props.allCompleted}
+        onClick={props.toggleAllCompleted}
+      />
+      <input type="text"/>
+    </div>
+
+  )
+}
 
 interface ItemRowProps {
   value: ItemData;
@@ -21,7 +38,7 @@ function ItemRow(props: ItemRowProps): JSX.Element {
         <input
           type="text"
           value={props.value.task}
-          onChange={(e) => props.handleEdit(e.target.value)}
+          onChange={(e) => props.handleEdit}
           onBlur={props.saveEdit}
           />
       </div>
@@ -71,16 +88,33 @@ class App extends React.Component<AppProps, AppState> {
       beingEdited: null,
     }
     this.toggleCompleted = this.toggleCompleted.bind(this);
+    this.toggleAllCompleted = this.toggleAllCompleted.bind(this);
     this.renderTask = this.renderTask.bind(this);
     this.startEdit = this.startEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
-    this.deleteItem = this.deleteItem.bind(this)
+    this.deleteItem = this.deleteItem.bind(this);
+    this.allCompleted = this.allCompleted.bind(this);
   }
 
   toggleCompleted(i: number): void {
     this.state.items[i].completed = !this.state.items[i].completed;
     this.setState({items: this.state.items});
+  }
+
+  allCompleted(): boolean {
+    return this.state.items.every((item: ItemData) => item.completed);
+  }
+
+  toggleAllCompleted(): void {
+    if (!this.allCompleted()) {
+      this.state.items.forEach(item => {item.completed = true})
+      this.setState({items: this.state.items})
+    }
+    else {
+      this.state.items.forEach(item => {item.completed = !item.completed})
+      this.setState({items: this.state.items})
+    }
   }
 
   startEdit(i: number): void {
@@ -121,9 +155,10 @@ class App extends React.Component<AppProps, AppState> {
     return (
     <div className="App">
       <header className="App-header">
-        <div>
-          <input type="text" />
-        </div>
+        <InputRow
+          allCompleted={this.allCompleted()}
+          toggleAllCompleted={this.toggleAllCompleted}
+        />
       </header>
       <div>
         {tasks}
