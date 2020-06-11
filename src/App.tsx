@@ -14,40 +14,36 @@ interface ItemRowProps {
   deleteItem: () => void;
 }
 
-interface ItemRowState {
-}
-
-class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
-  render() {
-    if (this.props.isEditing) {
-      return(
-        <div>
-          <input
-            type="text"
-            value={this.props.value.task}
-            onChange={(e) => this.props.handleEdit}
-            onBlur={this.props.saveEdit}
-            />
-        </div>
-      )
-    }
-    else {
-      return (
-        <div>
-          <input
-            type="checkbox"
-            checked={this.props.value.completed}
-            onClick={this.props.toggleCompleted}
+function ItemRow(props: ItemRowProps): JSX.Element {
+  if (props.isEditing) {
+    return(
+      <div>
+        <input
+          type="text"
+          value={props.value.task}
+          onChange={(e) => props.handleEdit(e.target.value)}
+          onBlur={props.saveEdit}
           />
-          <span onDoubleClick={this.props.startEdit}>
-            {this.props.value.task}
-          </span>
-          <button onClick={this.props.deleteItem}>X</button>
-        </div>
-      )
-    }
+      </div>
+    )
+  }
+  else {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          checked={props.value.completed}
+          onClick={props.toggleCompleted}
+        />
+        <span onDoubleClick={props.startEdit}>
+          {props.value.task}
+        </span>
+        <button onClick={props.deleteItem}>X</button>
+      </div>
+    )
   }
 }
+
 
 
 type ItemData = {
@@ -63,10 +59,7 @@ interface AppState {
   beingEdited: number | null;
 }
 
-
-
 class App extends React.Component<AppProps, AppState> {
-
   constructor(props: AppProps) {
     super(props);
     this.state = {
@@ -129,7 +122,7 @@ class App extends React.Component<AppProps, AppState> {
     <div className="App">
       <header className="App-header">
         <div>
-          <input type="text"/>
+          <input type="text" />
         </div>
       </header>
       <div>
