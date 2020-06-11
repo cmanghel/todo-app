@@ -38,7 +38,7 @@ function ItemRow(props: ItemRowProps): JSX.Element {
         <input
           type="text"
           value={props.value.task}
-          onChange={(e) => props.handleEdit}
+          onChange={(e) => props.handleEdit(e.target.value)}
           onBlur={props.saveEdit}
           />
       </div>
