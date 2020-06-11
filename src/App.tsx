@@ -10,7 +10,7 @@ interface ItemRowProps {
   toggleCompleted: () => void;
   startEdit: () => void;
   saveEdit: () => void;
-  handleEdit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEdit: (value: string) => void;
   deleteItem: () => void;
 }
 
@@ -25,7 +25,7 @@ class ItemRow extends React.Component<ItemRowProps, ItemRowState> {
           <input
             type="text"
             value={this.props.value.task}
-            onChange={this.props.handleEdit}
+            onChange={(e) => this.props.handleEdit}
             onBlur={this.props.saveEdit}
             />
         </div>
@@ -94,8 +94,8 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({beingEdited: i});
   }
 
-  handleEdit(i: number, event: React.ChangeEvent<HTMLInputElement>) {
-    this.state.items[i].task = event.target.value;
+  handleEdit(i: number, value: string) {
+    this.state.items[i].task = value;
     this.setState({items: this.state.items});
   }
 
@@ -116,7 +116,7 @@ class App extends React.Component<AppProps, AppState> {
       isEditing={this.state.beingEdited === i}
       toggleCompleted={() => this.toggleCompleted(i)}
       startEdit={() => this.startEdit(i)}
-      handleEdit={(event) => this.handleEdit(i, event)}
+      handleEdit={(value) => this.handleEdit(i, value)}
       saveEdit={() => this.saveEdit(i)}
       deleteItem={() => this.deleteItem(i)}
       />
