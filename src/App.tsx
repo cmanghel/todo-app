@@ -5,19 +5,26 @@ import './App.scss';
 interface InputRowProps {
   allCompleted: boolean;
   toggleAllCompleted: () => void;
+  saveInput: (value: string) => void;
 }
 
 function InputRow(props: InputRowProps): JSX.Element {
   return (
     <div>
-      <input
-        type="checkbox"
-        checked={props.allCompleted}
-        onClick={props.toggleAllCompleted}
-      />
-      <input type="text"/>
+      <form onSubmit={(e: any) => {
+        e.preventDefault();
+        props.saveInput(e.target[1].value)}}>
+        <input
+          type="checkbox"
+          checked={props.allCompleted}
+          onClick={props.toggleAllCompleted}
+        />
+        <input
+          type="text"
+          placeholder="Add a new task"
+        />
+      </form>
     </div>
-
   )
 }
 
@@ -95,6 +102,7 @@ class App extends React.Component<AppProps, AppState> {
     this.handleEdit = this.handleEdit.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
     this.allCompleted = this.allCompleted.bind(this);
+    this.saveInput = this.saveInput.bind(this);
   }
 
   toggleCompleted(i: number): void {
@@ -121,7 +129,7 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({beingEdited: i});
   }
 
-  handleEdit(i: number, value: string) {
+  handleEdit(i: number, value: string): void {
     this.state.items[i].task = value;
     this.setState({items: this.state.items});
   }
@@ -134,6 +142,11 @@ class App extends React.Component<AppProps, AppState> {
     const items = this.state.items.slice();
     items.splice(i, 1);
     this.setState({items, beingEdited: null});
+  }
+
+  saveInput(value: string): void {
+    this.state.items.push({task: value, completed: false});
+    this.setState({items: this.state.items});
   }
 
   renderTask(i: number): JSX.Element {
@@ -158,6 +171,7 @@ class App extends React.Component<AppProps, AppState> {
         <InputRow
           allCompleted={this.allCompleted()}
           toggleAllCompleted={this.toggleAllCompleted}
+          saveInput={(value) => this.saveInput(value)}
         />
       </header>
       <div>
