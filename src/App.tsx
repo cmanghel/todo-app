@@ -9,11 +9,21 @@ interface InputRowProps {
 }
 
 function InputRow(props: InputRowProps): JSX.Element {
+  const initialInputData = "";
+  const [inputData, updateInputData] = React.useState(initialInputData);
+  const handleChange = (e: any) =>{
+    updateInputData(e.target.value);
+  }
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    props.saveInput(inputData);
+    updateInputData(initialInputData);
+  }
+
   return (
     <div>
-      <form onSubmit={(e: any) => {
-        e.preventDefault();
-        props.saveInput(e.target[1].value)}}>
+      <form onSubmit={handleSubmit}>
         <input
           type="checkbox"
           checked={props.allCompleted}
@@ -22,6 +32,8 @@ function InputRow(props: InputRowProps): JSX.Element {
         <input
           type="text"
           placeholder="Add a new task"
+          onChange={handleChange}
+          value={inputData}
         />
       </form>
     </div>
@@ -145,8 +157,8 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   saveInput(value: string): void {
-    this.state.items.push({task: value, completed: false});
-    this.setState({items: this.state.items});
+    if (!value) return;
+    this.setState({items: this.state.items.concat({task: value, completed: false})});
   }
 
   renderTask(i: number): JSX.Element {
@@ -171,7 +183,7 @@ class App extends React.Component<AppProps, AppState> {
         <InputRow
           allCompleted={this.allCompleted()}
           toggleAllCompleted={this.toggleAllCompleted}
-          saveInput={(value) => this.saveInput(value)}
+          saveInput={this.saveInput}
         />
       </header>
       <div>
