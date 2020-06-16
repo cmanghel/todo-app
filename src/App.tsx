@@ -5,23 +5,18 @@ import './App.scss';
 interface InputRowProps {
   allCompleted: boolean;
   emptyList: boolean;
+  taskToAdd: string;
   toggleAllCompleted: () => void;
-  saveInput: (value: string) => void;
+  handleInput: (value: string) => void;
+  saveInput: () => void;
 }
 
 function InputRow(props: InputRowProps): JSX.Element {
-  const initialInputData = "";
-  const [inputData, updateInputData] = React.useState(initialInputData);
-
-  const handleChange = (e: any) => {
-    updateInputData(e.target.value);
-  }
 
   const handleSubmit = (e: any) => {
-    e.preventDefault();
-    props.saveInput(inputData);
-    updateInputData(initialInputData);
-  }
+     e.preventDefault();
+     props.saveInput();
+   }
 
   return props.emptyList ? (
     <div>
@@ -31,8 +26,8 @@ function InputRow(props: InputRowProps): JSX.Element {
           autoFocus
           type="text"
           placeholder="Add a new task"
-          onChange={handleChange}
-          value={inputData}
+          onChange={(e) => props.handleInput(e.target.value)}
+          value={props.taskToAdd}
         />
       </form>
     </div>
@@ -47,8 +42,8 @@ function InputRow(props: InputRowProps): JSX.Element {
         <input
           type="text"
           placeholder="Add a new task"
-          onChange={handleChange}
-          value={inputData}
+          onChange={(e) => props.handleInput(e.target.value)}
+          value={props.taskToAdd}
         />
       </form>
     </div>
@@ -111,14 +106,16 @@ interface AppProps {
 interface AppState {
   items: ItemData[];
   beingEdited: number | null;
+  taskToAdd: string;
 }
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     this.state = {
-      items:[],
+      items:[{task: "foo bar", completed: false}],
       beingEdited: null,
+      taskToAdd: "",
     }
     this.toggleCompleted = this.toggleCompleted.bind(this);
     this.toggleAllCompleted = this.toggleAllCompleted.bind(this);
@@ -167,12 +164,16 @@ class App extends React.Component<AppProps, AppState> {
   deleteItem(i: number): void {
     const items = this.state.items.slice();
     items.splice(i, 1);
-    this.setState({items, beingEdited: null});
+    this.setState({items});
   }
 
-  saveInput(value: string): void {
-    if (!value) return;
-    this.setState({items: this.state.items.concat({task: value, completed: false})});
+  handleInput(value: string): void {
+    this.setState({taskToAdd: value});
+  }
+
+  saveInput(): void {
+    if (!this.state.taskToAdd) return;
+    this.setState({items: this.state.items.concat({task: this.state.taskToAdd, completed: false}), taskToAdd: ""});
   }
 
   renderTask(i: number): JSX.Element {
@@ -197,8 +198,10 @@ class App extends React.Component<AppProps, AppState> {
         <InputRow
           allCompleted={this.allCompleted()}
           toggleAllCompleted={this.toggleAllCompleted}
-          saveInput={this.saveInput}
+          saveInput={() => this.saveInput()}
           emptyList={this.state.items.length === 0}
+          taskToAdd={this.state.taskToAdd}
+          handleInput={(value) => this.handleInput(value)}
         />
       </header>
       <div>
