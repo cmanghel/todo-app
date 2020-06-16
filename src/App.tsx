@@ -4,6 +4,7 @@ import './App.scss';
 
 interface InputRowProps {
   allCompleted: boolean;
+  emptyList: boolean;
   toggleAllCompleted: () => void;
   saveInput: (value: string) => void;
 }
@@ -11,7 +12,8 @@ interface InputRowProps {
 function InputRow(props: InputRowProps): JSX.Element {
   const initialInputData = "";
   const [inputData, updateInputData] = React.useState(initialInputData);
-  const handleChange = (e: any) =>{
+
+  const handleChange = (e: any) => {
     updateInputData(e.target.value);
   }
 
@@ -21,7 +23,20 @@ function InputRow(props: InputRowProps): JSX.Element {
     updateInputData(initialInputData);
   }
 
-  return (
+  return props.emptyList ? (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <input
+          autoFocus
+          type="text"
+          placeholder="Add a new task"
+          onChange={handleChange}
+          value={inputData}
+        />
+      </form>
+    </div>
+  ) : (
     <div>
       <form onSubmit={handleSubmit}>
         <input
@@ -54,12 +69,15 @@ function ItemRow(props: ItemRowProps): JSX.Element {
   if (props.isEditing) {
     return(
       <div>
-        <input
-          type="text"
-          value={props.value.task}
-          onChange={(e) => props.handleEdit(e.target.value)}
-          onBlur={props.saveEdit}
+        <form onSubmit={props.saveEdit}>
+          <input
+            autoFocus
+            type="text"
+            value={props.value.task}
+            onChange={(e) => props.handleEdit(e.target.value)}
+            onBlur={props.saveEdit}
           />
+        </form>
       </div>
     )
   }
@@ -99,11 +117,7 @@ class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     this.state = {
-      items:[
-        {task: "some shit to do", completed: true},
-        {task: "finish this app", completed: false},
-        {task: "third task", completed: true},
-      ],
+      items:[],
       beingEdited: null,
     }
     this.toggleCompleted = this.toggleCompleted.bind(this);
@@ -184,6 +198,7 @@ class App extends React.Component<AppProps, AppState> {
           allCompleted={this.allCompleted()}
           toggleAllCompleted={this.toggleAllCompleted}
           saveInput={this.saveInput}
+          emptyList={this.state.items.length === 0}
         />
       </header>
       <div>
