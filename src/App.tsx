@@ -87,12 +87,32 @@ function ItemRow(props: ItemRowProps): JSX.Element {
         <span onDoubleClick={props.startEdit}>
           {props.value.task}
         </span>
+        <span>&nbsp;&nbsp;&nbsp;</span>
         <button onClick={props.deleteItem}>X</button>
       </div>
     )
   }
 }
 
+interface OptionsRowProps {
+  itemsLeft: number;
+  viewOption: string;
+  emptyList: boolean;
+  // changeView: () => void;
+  clearCompleted: () => void;
+}
+
+function OptionsRow(props: OptionsRowProps): JSX.Element {
+  return !props.emptyList ? (
+    <div>
+      <span>{props.itemsLeft} item{props.itemsLeft === 1 ? '' : 's'} left</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <button onClick={props.clearCompleted}>Clear completed</button>
+    </div>
+  ) : (
+    <div></div>
+    )
+}
 
 
 type ItemData = {
@@ -107,6 +127,7 @@ interface AppState {
   items: ItemData[];
   beingEdited: number | null;
   taskToAdd: string;
+  viewOption: string;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -116,6 +137,7 @@ class App extends React.Component<AppProps, AppState> {
       items:[{task: "foo bar", completed: false}],
       beingEdited: null,
       taskToAdd: "",
+      viewOption: "All"
     }
     this.toggleCompleted = this.toggleCompleted.bind(this);
     this.toggleAllCompleted = this.toggleAllCompleted.bind(this);
@@ -126,6 +148,8 @@ class App extends React.Component<AppProps, AppState> {
     this.deleteItem = this.deleteItem.bind(this);
     this.allCompleted = this.allCompleted.bind(this);
     this.saveInput = this.saveInput.bind(this);
+    this.itemsLeft = this.itemsLeft.bind(this);
+    this.clearCompleted = this.clearCompleted.bind(this);
   }
 
   toggleCompleted(i: number): void {
@@ -173,8 +197,21 @@ class App extends React.Component<AppProps, AppState> {
 
   saveInput(): void {
     if (!this.state.taskToAdd) return;
-    this.setState({items: this.state.items.concat({task: this.state.taskToAdd, completed: false}), taskToAdd: ""});
+    this.setState({
+      items: this.state.items.concat({task: this.state.taskToAdd, completed: false}),
+      taskToAdd: ""
+    });
   }
+
+  itemsLeft(): number {
+    return this.state.items.filter(item => item.completed === false).length
+  }
+
+  clearCompleted(): void {
+    this.setState({items: this.state.items.filter(item => item.completed === false)})
+  }
+
+
 
   renderTask(i: number): JSX.Element {
     return (
@@ -206,6 +243,15 @@ class App extends React.Component<AppProps, AppState> {
       </header>
       <div>
         {tasks}
+      </div>
+      <div>
+        <OptionsRow
+          itemsLeft={this.itemsLeft()}
+          viewOption={this.state.viewOption}
+          emptyList={this.state.items.length === 0}
+          clearCompleted={this.clearCompleted}
+          // changeView={(view) => this.changeViewTo(view)}
+        />
       </div>
     </div>
     )
