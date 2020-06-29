@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react';
 import './App.scss';
+import Pluralize from 'pluralize';
 
 interface InputRowProps {
   allCompleted: boolean;
@@ -96,21 +97,52 @@ function ItemRow(props: ItemRowProps): JSX.Element {
 
 interface OptionsRowProps {
   itemsLeft: number;
-  viewOption: string;
+  viewOption: ViewType;
   emptyList: boolean;
-  // changeView: () => void;
+  handleChangeView: (value: ViewType) => void;
   clearCompleted: () => void;
 }
 
-function OptionsRow(props: OptionsRowProps): JSX.Element {
+function OptionsRow(props: OptionsRowProps): JSX.Element | null {
   return !props.emptyList ? (
     <div>
-      <span>{props.itemsLeft} item{props.itemsLeft === 1 ? '' : 's'} left</span>
+      <span>{Pluralize('item', props.itemsLeft, true)} left</span>
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <label>
+          <input
+            type="radio"
+            name="view"
+            value="All"
+            checked={props.viewOption === "All"}
+            onChange={(e) => props.handleChangeView("All")}
+            />
+          All
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="view"
+            value="Active"
+            checked={props.viewOption === "Active"}
+            onChange={(e) => props.handleChangeView("Active")}
+          />
+          Active
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="view"
+            value="Completed"
+            checked={props.viewOption === "Completed"}
+            onChange={(e) => props.handleChangeView("Completed")}
+          />
+          Completed
+        </label>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <button onClick={props.clearCompleted}>Clear completed</button>
     </div>
   ) : (
-    <div></div>
+    null
     )
 }
 
@@ -120,6 +152,8 @@ type ItemData = {
   completed: boolean;
 }
 
+type ViewType = "All" | "Active" | "Completed"
+
 interface AppProps {
 }
 
@@ -127,7 +161,7 @@ interface AppState {
   items: ItemData[];
   beingEdited: number | null;
   taskToAdd: string;
-  viewOption: string;
+  viewOption: ViewType;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -204,18 +238,19 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   itemsLeft(): number {
-    return this.state.items.filter(item => item.completed === false).length
+    return this.state.items.filter(item => !item.completed).length
   }
 
   clearCompleted(): void {
-    this.setState({items: this.state.items.filter(item => item.completed === false)})
+    this.setState({items: this.state.items.filter(item => !item.completed)})
   }
 
+  changeViewTo(value: ViewType): void {
+    this.setState({viewOption: value})
+  }
 
-
-  renderTask(i: number): JSX.Element {
-    return (
-      <ItemRow
+  renderTask(i: number): JSX.Element | null {
+    const row: JSX.Element = <ItemRow
       value={this.state.items[i]}
       isEditing={this.state.beingEdited === i}
       toggleCompleted={() => this.toggleCompleted(i)}
@@ -224,8 +259,18 @@ class App extends React.Component<AppProps, AppState> {
       saveEdit={() => this.saveEdit(i)}
       deleteItem={() => this.deleteItem(i)}
       />
-    )
-  }
+      switch (this.state.viewOption) {
+        case "All":
+          return row;
+          break;
+        case "Active":
+          return this.state.items[i].completed ? null : row;
+          break;
+        case "Completed":
+          return this.state.items[i].completed ? row : null;
+          break;
+        }
+      }
 
   render(): JSX.Element {
     const tasks = this.state.items.map((item, i) => this.renderTask(i));
@@ -250,7 +295,7 @@ class App extends React.Component<AppProps, AppState> {
           viewOption={this.state.viewOption}
           emptyList={this.state.items.length === 0}
           clearCompleted={this.clearCompleted}
-          // changeView={(view) => this.changeViewTo(view)}
+          handleChangeView={(value) => this.changeViewTo(value)}
         />
       </div>
     </div>
