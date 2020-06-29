@@ -104,41 +104,27 @@ interface OptionsRowProps {
 }
 
 function OptionsRow(props: OptionsRowProps): JSX.Element | null {
+  const views: ViewType[] = ["All", "Active", "Completed"];
+
+  const buttons = views.map(view =>
+  <label>
+    <input
+      type="radio"
+      name="view"
+      value={view}
+      checked={props.viewOption === view}
+      onChange={(e) => props.handleChangeView(view)}
+      />
+    {view}
+  </label>
+  );
+
   return !props.emptyList ? (
     <div>
       <span>{Pluralize('item', props.itemsLeft, true)} left</span>
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <label>
-          <input
-            type="radio"
-            name="view"
-            value="All"
-            checked={props.viewOption === "All"}
-            onChange={(e) => props.handleChangeView("All")}
-            />
-          All
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="view"
-            value="Active"
-            checked={props.viewOption === "Active"}
-            onChange={(e) => props.handleChangeView("Active")}
-          />
-          Active
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="view"
-            value="Completed"
-            checked={props.viewOption === "Completed"}
-            onChange={(e) => props.handleChangeView("Completed")}
-          />
-          Completed
-        </label>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      {buttons}
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <button onClick={props.clearCompleted}>Clear completed</button>
     </div>
   ) : (
