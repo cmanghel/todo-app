@@ -1,4 +1,5 @@
 {
+  "homepage": "http://cmanghel.github.io/todo-app",
   "name": "todo-app",
   "version": "0.1.0",
   "private": true,
@@ -10,9 +11,9 @@
     "@types/lodash": "^4.14.153",
     "@types/node": "^12.12.42",
     "@types/pluralize": "0.0.29",
-    "@types/react": "^16.9.35",
+    "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "node-sass": "^4.14.1",
     "pluralize": "^8.0.0",
     "react": "^16.13.1",
@@ -21,6 +22,8 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -50,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.20.0",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "gh-pages": "^3.1.0"
   }
 }
