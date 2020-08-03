@@ -96,6 +96,7 @@ function ItemRow(props: ItemRowProps): JSX.Element {
 }
 
 interface OptionsRowProps {
+  numberOfItems: number;
   itemsLeft: number;
   viewOption: ViewType;
   emptyList: boolean;
@@ -119,17 +120,21 @@ function OptionsRow(props: OptionsRowProps): JSX.Element | null {
   </label>
   );
 
-  return !props.emptyList ? (
+  return !props.emptyList ? 
     <div>
       <span>{Pluralize('item', props.itemsLeft, true)} left</span>
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       {buttons}
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <button onClick={props.clearCompleted}>Clear completed</button>
+      {props.numberOfItems - props.itemsLeft > 0 ? 
+        <button onClick={props.clearCompleted}>Clear completed</button>
+        : 
+        null
+      }
     </div>
-  ) : (
+   : 
     null
-    )
+    
 }
 
 
@@ -170,6 +175,7 @@ class App extends React.Component<AppProps, AppState> {
     this.saveInput = this.saveInput.bind(this);
     this.itemsLeft = this.itemsLeft.bind(this);
     this.clearCompleted = this.clearCompleted.bind(this);
+    this.numberOfItems = this.numberOfItems.bind(this);
   }
 
   toggleCompleted(i: number): void {
@@ -227,6 +233,10 @@ class App extends React.Component<AppProps, AppState> {
     return this.state.items.filter(item => !item.completed).length
   }
 
+  numberOfItems(): number {
+    return this.state.items.length
+  }
+
   clearCompleted(): void {
     this.setState({items: this.state.items.filter(item => !item.completed)})
   }
@@ -277,6 +287,7 @@ class App extends React.Component<AppProps, AppState> {
       </div>
       <div>
         <OptionsRow
+          numberOfItems={this.numberOfItems()}
           itemsLeft={this.itemsLeft()}
           viewOption={this.state.viewOption}
           emptyList={this.state.items.length === 0}
