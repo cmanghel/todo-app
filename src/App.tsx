@@ -120,20 +120,23 @@ function OptionsRow(props: OptionsRowProps): JSX.Element | null {
   </label>
   );
 
-  return !props.emptyList ? 
+  if (!props.emptyList) {
+    const clearCompletedButton = props.numberOfItems - props.itemsLeft > 0 ? 
+      <button onClick={props.clearCompleted}>Clear completed</button> :
+      null
+
+    return (
     <div>
       <span>{Pluralize('item', props.itemsLeft, true)} left</span>
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       {buttons}
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      {props.numberOfItems - props.itemsLeft > 0 ? 
-        <button onClick={props.clearCompleted}>Clear completed</button>
-        : 
-        null
-      }
+      {clearCompletedButton}
     </div>
-   : 
-    null
+    )
+   } else {
+       return null
+   }
     
 }
 
